@@ -12,6 +12,7 @@ Source0:	ftp://ftp.debian.org/debian/pool/main/l/lockdev/%{name}_%{version}.orig
 Patch0:		%{name}-Makefile.patch
 Patch1:		%{name}-baudboy.patch
 BuildRequires:	chrpath
+BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
 Lockdev provides a reliable way to put an exclusive lock to devices using both
