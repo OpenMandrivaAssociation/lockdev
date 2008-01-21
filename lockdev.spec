@@ -11,7 +11,7 @@ URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
 Source0:	ftp://ftp.debian.org/debian/pool/main/l/lockdev/%{name}_%{version}.orig.tar.bz2
 Patch0:		%{name}-Makefile.patch
 Patch1:		%{name}-baudboy.patch
-BuildRequires:	chrpath
+BuildRequires:	chrpath perl-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
