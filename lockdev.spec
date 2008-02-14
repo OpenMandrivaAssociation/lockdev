@@ -39,7 +39,7 @@ using both FSSTND and SVr4 methods. The lockdev-devel package contains the
 static development library and headers.
 
 %package	baudboy
-Summary:	lockdev utility
+Summary:	Lockdev utility
 Group:		System/Kernel and hardware
 Requires:	%{libname} = %{version}-%{release}
 
