@@ -24,6 +24,8 @@ Patch7:		lockdev-1.0.1-fcntl.patch
 # (blino) rediffed for 1.0.3, from 1.0.1 RH patch
 Patch8:		lockdev-1.0.3-32bit.patch
 Patch10:	lockdev-1.0.3-perlmake.patch
+# (blino) link lockdev helper with shared library (from PLD)
+Patch11:	lockdev-1.0.3-shared2.patch
 BuildRequires:	chrpath perl-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
@@ -90,6 +92,7 @@ their content is the pid of the process who owns the lock.
 %patch7 -p1 -b .fcntl
 %patch8 -p1 -b .32bit
 %patch10 -p1 -b .perlmake
+%patch11 -p1 -b .shared2
 
 %build
 
