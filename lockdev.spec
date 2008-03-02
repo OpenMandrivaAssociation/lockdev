@@ -11,6 +11,7 @@ URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
 Source0:	ftp://ftp.debian.org/debian/pool/main/l/lockdev/%{name}_%{version}.orig.tar.bz2
 Patch0:		%{name}-Makefile.patch
 Patch1:		%{name}-baudboy.patch
+Patch10:	lockdev-1.0.3-perlmake.patch
 BuildRequires:	chrpath perl-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
@@ -68,6 +69,7 @@ their content is the pid of the process who owns the lock.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch10 -p1 -b .perlmake
 
 %build
 
