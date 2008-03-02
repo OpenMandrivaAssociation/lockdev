@@ -9,8 +9,20 @@ License:	LGPL
 Group:		System/Libraries
 URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
 Source0:	ftp://ftp.debian.org/debian/pool/main/l/lockdev/%{name}_%{version}.orig.tar.bz2
-Patch0:		%{name}-Makefile.patch
-Patch1:		%{name}-baudboy.patch
+# (blino) rediffed for 1.0.3, from 1.0.0 RH patch
+Patch0:		lockdev-1.0.3-rh.patch
+Patch1:		lockdev-1.0.0-shared.patch
+Patch2:		lockdev-1.0.0-signal.patch
+Patch3:		lockdev-1.0.0-cli.patch
+# merged upstream
+#Patch4:	lockdev-1.0.1-checkname.patch
+# (blino) rediffed for 1.0.3, from 1.0.1 RH patch
+Patch5:		lockdev-1.0.3-pidexists.patch
+# upstream has a similar workaround (with ':' instead of pppd-like '_' to replace '/')
+#Patch6:	lockdev-1.0.1-subdir.patch
+Patch7:		lockdev-1.0.1-fcntl.patch
+# (blino) rediffed for 1.0.3, from 1.0.1 RH patch
+Patch8:		lockdev-1.0.3-32bit.patch
 Patch10:	lockdev-1.0.3-perlmake.patch
 BuildRequires:	chrpath perl-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}
@@ -67,8 +79,15 @@ their content is the pid of the process who owns the lock.
 %prep
 
 %setup -q
-%patch0 -p1
-%patch1 -p1
+%patch0 -p1 -b .redhat
+%patch1 -p1 -b .shared
+%patch2 -p1 -b .signal
+%patch3 -p1 -b .jbj
+#%patch4 -p1 -b .checkname
+%patch5 -p1 -b .pidexists
+#%patch6 -p1 -b .subdir
+%patch7 -p1 -b .fcntl
+%patch8 -p1 -b .32bit
 %patch10 -p1 -b .perlmake
 
 %build
