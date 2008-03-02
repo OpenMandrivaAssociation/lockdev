@@ -4,7 +4,7 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.3
-Release:	%mkrel 4
+Release:	%mkrel 5
 License:	LGPL
 Group:		System/Libraries
 URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
@@ -36,7 +36,6 @@ FSSTND and SVr4 methods.
 %package -n	%{libname}
 Summary:	A library for locking devices
 Group:		System/Libraries
-Requires:	%{name}-baudboy
 
 %description -n	%{libname}
 Lockdev provides a reliable way to put an exclusive lock to devices using both
