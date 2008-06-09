@@ -124,9 +124,13 @@ install -m0644 docs/lockdev.3 %{buildroot}%{_mandir}/man3/
 # nuke rpath
 chrpath -d %{buildroot}%{perl_vendorarch}/auto/LockDev/*.so
 
+%if %mdkversion < 200900
 %post -n %{libname} -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %postun -n %{libname} -p /sbin/ldconfig
+%endif
 
 %clean
 rm -rf %{buildroot}
