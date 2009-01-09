@@ -4,7 +4,7 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.3
-Release:	%mkrel 6
+Release:	%mkrel 7
 License:	LGPL
 Group:		System/Libraries
 URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
@@ -149,7 +149,7 @@ rm -rf %{buildroot}
 
 %files baudboy
 %defattr(-,root,root)
-%attr(2755,root,uucp) %{_sbindir}/lockdev
+%attr(2755,root,dialout) %{_sbindir}/lockdev
 
 %files -n perl-LockDev
 %defattr(-,root,root)
