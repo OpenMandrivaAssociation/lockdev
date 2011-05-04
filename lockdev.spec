@@ -4,7 +4,7 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.3
-Release:	%mkrel 11
+Release:	%mkrel 12
 License:	LGPL
 Group:		System/Libraries
 URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
