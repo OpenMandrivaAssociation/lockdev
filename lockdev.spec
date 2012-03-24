@@ -1,33 +1,31 @@
-%define	major 1
+%define	major	1
 %define libname	%mklibname lockdev %{major}
+
+%define _with_perl 0
+
+# Where lock files are stored
+%global _lockdir %{_localstatedir}/lock/lockdev
+
+%global checkout 20111007git
+%global co_date  2011-10-07
 
 Summary:	A library for locking devices
 Name:		lockdev
-Version:	1.0.3
-Release:	%mkrel 13
-License:	LGPL
+Version:	1.0.4
+Release:	%mkrel 0.1%{checkout}.2
+License:	LGPLv2
 Group:		System/Libraries
 URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
-Source0:	ftp://ftp.debian.org/debian/pool/main/l/lockdev/%{name}_%{version}.orig.tar.bz2
-# (blino) rediffed for 1.0.3, from 1.0.0 RH patch
-Patch0:		lockdev-1.0.3-rh.patch
-Patch1:		lockdev-1.0.0-shared.patch
-Patch2:		lockdev-1.0.0-signal.patch
-Patch3:		lockdev-1.0.0-cli.patch
-# merged upstream
-#Patch4:	lockdev-1.0.1-checkname.patch
-# (blino) rediffed for 1.0.3, from 1.0.1 RH patch
-Patch5:		lockdev-1.0.3-pidexists.patch
-# upstream has a similar workaround (with ':' instead of pppd-like '_' to replace '/')
-#Patch6:	lockdev-1.0.1-subdir.patch
-Patch7:		lockdev-1.0.1-fcntl.patch
-# (blino) rediffed for 1.0.3, from 1.0.1 RH patch
-Patch8:		lockdev-1.0.3-32bit.patch
-Patch10:	lockdev-1.0.3-perlmake.patch
-# (blino) link lockdev helper with shared library (from PLD)
-Patch11:	lockdev-1.0.3-shared2.patch
-BuildRequires:	chrpath perl-devel
-BuildRoot:	%{_tmppath}/%{name}-%{version}
+# This is a nightly snapshot downloaded via
+# https://alioth.debian.org/snapshots.php?group_id=100443
+Source0:	lockdev-%{version}.%{checkout}.tar.gz
+BuildRequires:	chrpath
+%if %_with_perl
+BuildRequires:	perl-devel
+%endif
+Requires(pre):	rpm-helper
+Provides:	%{name}-baudboy = %version-%release
+Obsoletes:	%{name}-baudboy < 1.0.4
 
 %description
 Lockdev provides a reliable way to put an exclusive lock to devices using both
@@ -53,14 +51,7 @@ The lockdev library provides a reliable way to put an exclusive lock on devices
 using both FSSTND and SVr4 methods. The lockdev-devel package contains the
 static development library and headers.
 
-%package	baudboy
-Summary:	Lockdev utility
-Group:		System/Kernel and hardware
-Requires:	%{libname} = %{version}-%{release}
-
-%description	baudboy
-This package contains sgid lockdev utility used by Baudboy API.
-
+%if %_with_perl
 %package -n	perl-LockDev
 Summary:	LockDev - Perl extension to manage device lockfiles
 Group:		Development/Perl
@@ -77,83 +68,68 @@ users).
 
 The lock file names are typically in the form LCK..ttyS1 and LCK.004.065, and
 their content is the pid of the process who owns the lock.
+%endif
 
 %prep
 
-%setup -q
-%patch0 -p1 -b .redhat
-%patch1 -p1 -b .shared
-%patch2 -p1 -b .signal
-%patch3 -p1 -b .jbj
-#%patch4 -p1 -b .checkname
-%patch5 -p1 -b .pidexists
-#%patch6 -p1 -b .subdir
-%patch7 -p1 -b .fcntl
-%patch8 -p1 -b .32bit
-%patch10 -p1 -b .perlmake
-%patch11 -p1 -b .shared2
+%setup -q -n lockdev-scm-%{co_date}
 
 %build
+# Generate version information from git release tag
+./scripts/git-version > VERSION
 
-make shared static lockdev CC="%{__cc}" CFLAGS="%{optflags}"
+# To satisfy automake
+touch ChangeLog
 
+# Bootstrap autotools
+autoreconf --verbose --force --install
+
+CFLAGS="%{optflags} -D_PATH_LOCK=\\\"%{_lockdir}\\\"" \
+%configure --disable-static --enable-helper
+
+%make
+
+%if %_with_perl
 pushd LockDev
     perl Makefile.PL INSTALLDIRS=vendor
     make OPTIMIZE="%{optflags}"
 popd
+%endif
 
 %install
-rm -rf %{buildroot}
+# Fix upstream permission bug #3053
+chmod 644 docs/LSB.991201
+%makeinstall_std
 
-install -d %{buildroot}%{_sbindir}
-install -d %{buildroot}%{_libdir}
-install -d %{buildroot}%{_includedir}
-install -d %{buildroot}%{_mandir}/man3
+mkdir -p %{buildroot}%{_lockdir}
 
-install -m0755 liblockdev.so.1.0.3 %{buildroot}%{_libdir}/
-ln -snf liblockdev.so.1.0.3 %{buildroot}%{_libdir}/liblockdev.so.1
-ln -snf liblockdev.so.1.0.3 %{buildroot}%{_libdir}/liblockdev.so
+%pre
+%_pre_groupadd lock
 
-install -m0644 liblockdev.a %{buildroot}%{_libdir}/
-install -m0644 src/*.h %{buildroot}%{_includedir}/
-install -m0755 lockdev %{buildroot}%{_sbindir}/
-install -m0644 docs/lockdev.3 %{buildroot}%{_mandir}/man3/
-
-%makeinstall_std -C LockDev
-
+%if %_with_perl
 # nuke rpath
 chrpath -d %{buildroot}%{perl_vendorarch}/auto/LockDev/*.so
-
-%if %mdkversion < 200900
-%post -n %{libname} -p /sbin/ldconfig
 %endif
 
-%if %mdkversion < 200900
-%postun -n %{libname} -p /sbin/ldconfig
-%endif
-
-%clean
-rm -rf %{buildroot}
+%files
+%dir %attr(0775,root,lock) %{_lockdir}
+%doc AUTHORS ChangeLog ChangeLog.old README.debug docs/LSB.991201
+%attr(2755,root,lock) %{_sbindir}/lockdev
+%{_mandir}/man8/*
 
 %files -n %{libname}
-%defattr(-,root,root)
-%doc AUTHORS ChangeLog ChangeLog.old LICENSE README.debug docs/LSB.991201
 %attr(0755,root,root) %{_libdir}/lib*.so.*
 
 %files -n %{libname}-devel
-%defattr(-,root,root)
 %attr(0755,root,root) %{_libdir}/*.so
-%attr(0644,root,root) %{_libdir}/*.a
 %attr(0644,root,root) %{_includedir}/*.h
 %attr(0644,root,root) %{_mandir}/man3/lockdev.3*
+%{_libdir}/pkgconfig/lockdev.pc
 
-%files baudboy
-%defattr(-,root,root)
-%attr(2755,root,dialout) %{_sbindir}/lockdev
-
+%if %_with_perl
 %files -n perl-LockDev
-%defattr(-,root,root)
 %{perl_vendorarch}/LockDev.pm
 %dir %{perl_vendorarch}/auto/LockDev
 %attr(0755,root,root) %{perl_vendorarch}/auto/LockDev/*.so
 %{_mandir}/man3/LockDev.3*
+%endif
