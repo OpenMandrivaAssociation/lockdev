@@ -4,7 +4,7 @@
 %define _with_perl 0
 
 # Where lock files are stored
-%global _lockdir %{_localstatedir}/lock/lockdev
+%global _lockdir /run/lock/lockdev
 
 %global checkout 20111007git
 %global co_date  2011-10-07
@@ -12,7 +12,7 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
-Release:	%mkrel 0.1%{checkout}.2
+Release:	%mkrel 0.1%{checkout}.3
 License:	LGPLv2
 Group:		System/Libraries
 URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
@@ -24,14 +24,14 @@ BuildRequires:	chrpath
 BuildRequires:	perl-devel
 %endif
 Requires(pre):	rpm-helper
-Provides:	%{name}-baudboy = %version-%release
+Provides:	%{name}-baudboy = %{version}-%{release}
 Obsoletes:	%{name}-baudboy < 1.0.4
 
 %description
 Lockdev provides a reliable way to put an exclusive lock to devices using both
 FSSTND and SVr4 methods.
 
-%package -n	%{libname}
+%package -n %{libname}
 Summary:	A library for locking devices
 Group:		System/Libraries
 
@@ -39,7 +39,7 @@ Group:		System/Libraries
 Lockdev provides a reliable way to put an exclusive lock to devices using both
 FSSTND and SVr4 methods.
 
-%package -n	%{libname}-devel
+%package -n %{libname}-devel
 Summary:	The Static lockdev library and header files for the lockdev library
 Group:		Development/C
 Requires:	%{libname} = %{version}-%{release}
@@ -52,7 +52,7 @@ using both FSSTND and SVr4 methods. The lockdev-devel package contains the
 static development library and headers.
 
 %if %_with_perl
-%package -n	perl-LockDev
+%package -n perl-LockDev
 Summary:	LockDev - Perl extension to manage device lockfiles
 Group:		Development/Perl
 Requires:	%{libname} = %{version}-%{release}
@@ -101,8 +101,6 @@ popd
 chmod 644 docs/LSB.991201
 %makeinstall_std
 
-mkdir -p %{buildroot}%{_lockdir}
-
 %pre
 %_pre_groupadd lock
 
@@ -112,7 +110,6 @@ chrpath -d %{buildroot}%{perl_vendorarch}/auto/LockDev/*.so
 %endif
 
 %files
-%dir %attr(0775,root,lock) %{_lockdir}
 %doc AUTHORS ChangeLog ChangeLog.old README.debug docs/LSB.991201
 %attr(2755,root,lock) %{_sbindir}/lockdev
 %{_mandir}/man8/*
