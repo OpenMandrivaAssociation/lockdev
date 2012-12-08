@@ -12,7 +12,7 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
-Release:	%mkrel 0.1%{checkout}.3
+Release:	0.1%{checkout}.6
 License:	LGPLv2
 Group:		System/Libraries
 URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
@@ -31,7 +31,7 @@ Obsoletes:	%{name}-baudboy < 1.0.4
 Lockdev provides a reliable way to put an exclusive lock to devices using both
 FSSTND and SVr4 methods.
 
-%package -n %{libname}
+%package -n	%{libname}
 Summary:	A library for locking devices
 Group:		System/Libraries
 
@@ -39,7 +39,7 @@ Group:		System/Libraries
 Lockdev provides a reliable way to put an exclusive lock to devices using both
 FSSTND and SVr4 methods.
 
-%package -n %{libname}-devel
+%package -n	%{libname}-devel
 Summary:	The Static lockdev library and header files for the lockdev library
 Group:		Development/C
 Requires:	%{libname} = %{version}-%{release}
@@ -52,7 +52,7 @@ using both FSSTND and SVr4 methods. The lockdev-devel package contains the
 static development library and headers.
 
 %if %_with_perl
-%package -n perl-LockDev
+%package -n	perl-LockDev
 Summary:	LockDev - Perl extension to manage device lockfiles
 Group:		Development/Perl
 Requires:	%{libname} = %{version}-%{release}
@@ -71,7 +71,6 @@ their content is the pid of the process who owns the lock.
 %endif
 
 %prep
-
 %setup -q -n lockdev-scm-%{co_date}
 
 %build
@@ -102,7 +101,8 @@ chmod 644 docs/LSB.991201
 %makeinstall_std
 
 %pre
-%_pre_groupadd lock
+getent group lock >/dev/null || groupadd -g 54 -r -f lock
+exit 0
 
 %if %_with_perl
 # nuke rpath
