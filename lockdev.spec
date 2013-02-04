@@ -12,7 +12,7 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
-Release:	0.1%{checkout}.6
+Release:	0.1%{checkout}.7
 License:	LGPLv2
 Group:		System/Libraries
 URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
@@ -79,6 +79,7 @@ their content is the pid of the process who owns the lock.
 
 # To satisfy automake
 touch ChangeLog
+mkdir -p m4
 
 # Bootstrap autotools
 autoreconf --verbose --force --install
