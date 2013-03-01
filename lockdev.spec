@@ -1,5 +1,6 @@
 %define	major	1
 %define libname	%mklibname lockdev %{major}
+%define devname	%mklibname lockdev -d
 
 %define _with_perl 0
 
@@ -12,10 +13,10 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
-Release:	0.1%{checkout}.7
+Release:	1.%{checkout}.1
 License:	LGPLv2
 Group:		System/Libraries
-URL:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
+Url:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
 # This is a nightly snapshot downloaded via
 # https://alioth.debian.org/snapshots.php?group_id=100443
 Source0:	lockdev-%{version}.%{checkout}.tar.gz
@@ -24,8 +25,6 @@ BuildRequires:	chrpath
 BuildRequires:	perl-devel
 %endif
 Requires(pre):	rpm-helper
-Provides:	%{name}-baudboy = %{version}-%{release}
-Obsoletes:	%{name}-baudboy < 1.0.4
 
 %description
 Lockdev provides a reliable way to put an exclusive lock to devices using both
@@ -39,17 +38,17 @@ Group:		System/Libraries
 Lockdev provides a reliable way to put an exclusive lock to devices using both
 FSSTND and SVr4 methods.
 
-%package -n	%{libname}-devel
-Summary:	The Static lockdev library and header files for the lockdev library
+%package -n	%{devname}
+Summary:	The development library and header files for the lockdev library
 Group:		Development/C
 Requires:	%{libname} = %{version}-%{release}
-Provides:	lib%{name}-devel = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
+Obsoletes:	%{_lib}lockdev1-devel < 1.0.4-0.120111007git.8
 
-%description -n	%{libname}-devel
+%description -n	%{devname}
 The lockdev library provides a reliable way to put an exclusive lock on devices
 using both FSSTND and SVr4 methods. The lockdev-devel package contains the
-static development library and headers.
+development library and headers.
 
 %if %_with_perl
 %package -n	perl-LockDev
@@ -71,7 +70,7 @@ their content is the pid of the process who owns the lock.
 %endif
 
 %prep
-%setup -q -n lockdev-scm-%{co_date}
+%setup -qn lockdev-scm-%{co_date}
 
 %build
 # Generate version information from git release tag
@@ -85,7 +84,9 @@ mkdir -p m4
 autoreconf --verbose --force --install
 
 CFLAGS="%{optflags} -D_PATH_LOCK=\\\"%{_lockdir}\\\"" \
-%configure --disable-static --enable-helper
+%configure 2_5 \
+	--disable-static \
+	--enable-helper
 
 %make
 
@@ -116,12 +117,12 @@ chrpath -d %{buildroot}%{perl_vendorarch}/auto/LockDev/*.so
 %{_mandir}/man8/*
 
 %files -n %{libname}
-%attr(0755,root,root) %{_libdir}/lib*.so.*
+%{_libdir}/liblockdev.so.%{major}*
 
-%files -n %{libname}-devel
-%attr(0755,root,root) %{_libdir}/*.so
-%attr(0644,root,root) %{_includedir}/*.h
-%attr(0644,root,root) %{_mandir}/man3/lockdev.3*
+%files -n %{devname}
+%{_libdir}/*.so
+%{_includedir}/*.h
+%{_mandir}/man3/lockdev.3*
 %{_libdir}/pkgconfig/lockdev.pc
 
 %if %_with_perl
