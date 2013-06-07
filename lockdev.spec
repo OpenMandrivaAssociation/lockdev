@@ -1,6 +1,6 @@
-%define	major	1
-%define libname	%mklibname lockdev %{major}
-%define devname	%mklibname lockdev -d
+%define	major 1
+%define libname %mklibname lockdev %{major}
+%define devname %mklibname lockdev -d
 
 %define _with_perl 0
 
@@ -13,7 +13,7 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
-Release:	1.%{checkout}.1
+Release:	1.%{checkout}.2
 License:	LGPLv2
 Group:		System/Libraries
 Url:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
