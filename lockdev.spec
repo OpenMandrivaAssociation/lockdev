@@ -84,7 +84,7 @@ mkdir -p m4
 autoreconf --verbose --force --install
 
 CFLAGS="%{optflags} -D_PATH_LOCK=\\\"%{_lockdir}\\\"" \
-%configure 2_5 \
+%configure2_5x \
 	--disable-static \
 	--enable-helper
 
@@ -132,3 +132,4 @@ chrpath -d %{buildroot}%{perl_vendorarch}/auto/LockDev/*.so
 %attr(0755,root,root) %{perl_vendorarch}/auto/LockDev/*.so
 %{_mandir}/man3/LockDev.3*
 %endif
+
