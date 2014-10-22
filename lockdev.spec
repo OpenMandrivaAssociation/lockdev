@@ -13,7 +13,7 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
-Release:	1.%{checkout}.2
+Release:	1.%{checkout}.3
 License:	LGPLv2
 Group:		System/Libraries
 Url:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
@@ -25,6 +25,7 @@ BuildRequires:	chrpath
 BuildRequires:	perl-devel
 %endif
 Requires(pre):	rpm-helper
+Requires(pre):	bash
 
 %description
 Lockdev provides a reliable way to put an exclusive lock to devices using both
@@ -84,7 +85,7 @@ mkdir -p m4
 autoreconf --verbose --force --install
 
 CFLAGS="%{optflags} -D_PATH_LOCK=\\\"%{_lockdir}\\\"" \
-%configure2_5x \
+%configure \
 	--disable-static \
 	--enable-helper
 
