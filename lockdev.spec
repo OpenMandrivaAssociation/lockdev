@@ -13,7 +13,7 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
-Release:	1.%{checkout}.3
+Release:	1.%{checkout}.4
 License:	LGPLv2
 Group:		System/Libraries
 Url:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
@@ -24,8 +24,7 @@ BuildRequires:	chrpath
 %if %_with_perl
 BuildRequires:	perl-devel
 %endif
-Requires(pre):	rpm-helper
-Requires(pre):	bash
+Requires:	rpm-helper
 
 %description
 Lockdev provides a reliable way to put an exclusive lock to devices using both
@@ -103,8 +102,9 @@ popd
 chmod 644 docs/LSB.991201
 %makeinstall_std
 
-%pre
+%posttrans
 getent group lock >/dev/null || groupadd -g 54 -r -f lock
+chown root:lock %{_sbindir}/lockdev
 exit 0
 
 %if %_with_perl
@@ -133,4 +133,3 @@ chrpath -d %{buildroot}%{perl_vendorarch}/auto/LockDev/*.so
 %attr(0755,root,root) %{perl_vendorarch}/auto/LockDev/*.so
 %{_mandir}/man3/LockDev.3*
 %endif
-
