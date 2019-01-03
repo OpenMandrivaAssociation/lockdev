@@ -10,6 +10,9 @@
 %global checkout 20111007git
 %global co_date  2011-10-07
 
+# (tpg) fix build
+%global optflags %{optflags} -fPIC
+
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
