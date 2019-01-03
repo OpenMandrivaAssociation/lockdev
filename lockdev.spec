@@ -13,14 +13,16 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
-Release:	1.%{checkout}.4
+Release:	1.%{checkout}.5
 License:	LGPLv2
 Group:		System/Libraries
 Url:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
 # This is a nightly snapshot downloaded via
 # https://alioth.debian.org/snapshots.php?group_id=100443
 Source0:	lockdev-%{version}.%{checkout}.tar.gz
+Patch0:	0001-major-and-minor-functions-moved-to-sysmacros.h.patch
 BuildRequires:	chrpath
+BuildRequires:	rpm-helper
 %if %_with_perl
 BuildRequires:	perl-devel
 %endif
@@ -71,6 +73,7 @@ their content is the pid of the process who owns the lock.
 
 %prep
 %setup -qn lockdev-scm-%{co_date}
+%autopatch -p1
 
 %build
 # Generate version information from git release tag
@@ -88,7 +91,7 @@ CFLAGS="%{optflags} -D_PATH_LOCK=\\\"%{_lockdir}\\\"" \
 	--disable-static \
 	--enable-helper
 
-%make
+%make_build
 
 %if %_with_perl
 pushd LockDev
@@ -100,7 +103,7 @@ popd
 %install
 # Fix upstream permission bug #3053
 chmod 644 docs/LSB.991201
-%makeinstall_std
+%make_install
 
 %posttrans
 getent group lock >/dev/null || groupadd -g 54 -r -f lock
