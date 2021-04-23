@@ -1,4 +1,4 @@
-%define	major 1
+%define major 1
 %define libname %mklibname lockdev %{major}
 %define devname %mklibname lockdev -d
 
@@ -8,7 +8,7 @@
 %global _lockdir /run/lock/lockdev
 
 %global checkout 20111007git
-%global co_date  2011-10-07
+%global co_date 2011-10-07
 
 # (tpg) fix build
 %global optflags %{optflags} -fPIC
@@ -16,52 +16,53 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
-Release:	1.%{checkout}.5
+Release:	1.%{checkout}.6
 License:	LGPLv2
 Group:		System/Libraries
 Url:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
 # This is a nightly snapshot downloaded via
 # https://alioth.debian.org/snapshots.php?group_id=100443
 Source0:	lockdev-%{version}.%{checkout}.tar.gz
-Patch0:	0001-major-and-minor-functions-moved-to-sysmacros.h.patch
+Source1:	%{name}.tmpfiles
+Source2:	%{name}.sysusers
+Patch0:		0001-major-and-minor-functions-moved-to-sysmacros.h.patch
 BuildRequires:	chrpath
-BuildRequires:	rpm-helper
 %if %_with_perl
 BuildRequires:	perl-devel
 %endif
-Requires:	rpm-helper
+%systemd_requires
 
 %description
 Lockdev provides a reliable way to put an exclusive lock to devices using both
 FSSTND and SVr4 methods.
 
-%package -n	%{libname}
+%package -n %{libname}
 Summary:	A library for locking devices
 Group:		System/Libraries
 
-%description -n	%{libname}
+%description -n %{libname}
 Lockdev provides a reliable way to put an exclusive lock to devices using both
 FSSTND and SVr4 methods.
 
-%package -n	%{devname}
+%package -n %{devname}
 Summary:	The development library and header files for the lockdev library
 Group:		Development/C
 Requires:	%{libname} = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
 Obsoletes:	%{_lib}lockdev1-devel < 1.0.4-0.120111007git.8
 
-%description -n	%{devname}
+%description -n %{devname}
 The lockdev library provides a reliable way to put an exclusive lock on devices
 using both FSSTND and SVr4 methods. The lockdev-devel package contains the
 development library and headers.
 
 %if %_with_perl
-%package -n	perl-LockDev
+%package -n perl-LockDev
 Summary:	LockDev - Perl extension to manage device lockfiles
 Group:		Development/Perl
 Requires:	%{libname} = %{version}-%{release}
 
-%description -n	perl-LockDev
+%description -n perl-LockDev
 The LockDev methods act on device locks normally located in /var/lock. The lock
 is acquired creating a pair of files hardlinked between them and named after
 the device name (as mandated by FSSTND) and the device's major and minor
@@ -108,10 +109,8 @@ popd
 chmod 644 docs/LSB.991201
 %make_install
 
-%posttrans
-getent group lock >/dev/null || groupadd -g 54 -r -f lock
-chown root:lock %{_sbindir}/lockdev
-exit 0
+install -D -p -m 644 %{SOURCE1} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -D -p -m 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 
 %if %_with_perl
 # nuke rpath
@@ -120,6 +119,8 @@ chrpath -d %{buildroot}%{perl_vendorarch}/auto/LockDev/*.so
 
 %files
 %doc AUTHORS ChangeLog ChangeLog.old README.debug docs/LSB.991201
+%{_tmpfilesdir}/%{name}.conf
+%{_sysusersdir}/%{name}.conf
 %attr(2755,root,lock) %{_sbindir}/lockdev
 %{_mandir}/man8/*
 
