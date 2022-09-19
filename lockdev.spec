@@ -16,7 +16,7 @@
 Summary:	A library for locking devices
 Name:		lockdev
 Version:	1.0.4
-Release:	1.%{checkout}.6
+Release:	1.%{checkout}.7
 License:	LGPLv2
 Group:		System/Libraries
 Url:		ftp://ftp.debian.org/debian/pool/main/l/lockdev/
@@ -76,8 +76,7 @@ their content is the pid of the process who owns the lock.
 %endif
 
 %prep
-%setup -qn lockdev-scm-%{co_date}
-%autopatch -p1
+%autosetup -n lockdev-scm-%{co_date} -p1
 
 %build
 # Generate version information from git release tag
@@ -117,12 +116,15 @@ install -D -p -m 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 chrpath -d %{buildroot}%{perl_vendorarch}/auto/LockDev/*.so
 %endif
 
+%pre
+%sysusers_create_package %{name} %{SOURCE2}
+
 %files
 %doc AUTHORS ChangeLog ChangeLog.old README.debug docs/LSB.991201
 %{_tmpfilesdir}/%{name}.conf
 %{_sysusersdir}/%{name}.conf
 %attr(2755,root,lock) %{_sbindir}/lockdev
-%{_mandir}/man8/*
+%doc %{_mandir}/man8/*
 
 %files -n %{libname}
 %{_libdir}/liblockdev.so.%{major}*
@@ -130,7 +132,7 @@ chrpath -d %{buildroot}%{perl_vendorarch}/auto/LockDev/*.so
 %files -n %{devname}
 %{_libdir}/*.so
 %{_includedir}/*.h
-%{_mandir}/man3/lockdev.3*
+%doc %{_mandir}/man3/lockdev.3*
 %{_libdir}/pkgconfig/lockdev.pc
 
 %if %_with_perl
